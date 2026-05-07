@@ -82,7 +82,18 @@ document.addEventListener('DOMContentLoaded', () => {
             result.path.forEach((step, index) => {
                 const node = document.createElement('div');
                 node.className = 'step-node';
-                node.textContent = step.join(', ');
+
+                // Crear grid 2x2
+                const grid = document.createElement('div');
+                grid.className = 'puzzle-grid';
+                step.forEach(val => {
+                    const tile = document.createElement('div');
+                    tile.className = 'puzzle-tile';
+                    tile.textContent = val;
+                    grid.appendChild(tile);
+                });
+
+                node.appendChild(grid);
                 visualizer.appendChild(node);
 
                 if (index < result.path.length - 1) {
