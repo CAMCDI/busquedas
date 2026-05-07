@@ -135,6 +135,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             renderResults(data);
+
+            // Auto-scroll a los resultados
+            resultsContent.scrollIntoView({ behavior: 'smooth' });
         } catch (err) {
             showError(err.message);
         } finally {
