@@ -149,6 +149,44 @@ input:focus {
     margin-bottom: 2.5rem;
 }
 
+.selection-group {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px dashed #ddd;
+}
+
+.checkbox-grid {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.check-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1.2rem;
+    font-family: 'Quicksand', sans-serif;
+    cursor: pointer;
+    background: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    transition: all 0.2s ease;
+}
+
+.check-item:hover {
+    background: #f8f8f8;
+    transform: translateY(-2px);
+}
+
+.check-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
 .solve-btn {
     width: 100%;
     padding: 1.2rem;
@@ -180,25 +218,27 @@ input:focus {
 }
 
 .results-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    display: flex;
+    justify-content: center;
     gap: 2rem;
     margin-top: 2rem;
-}
-
-@media (max-width: 900px) {
-    .results-grid {
-        grid-template-columns: 1fr;
-    }
+    flex-wrap: wrap;
 }
 
 .results-column {
+    flex: 1;
+    min-width: 280px;
+    max-width: 400px;
     background: white;
     border: 3px solid var(--border-sketch);
     border-radius: 15px;
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
+}
+
+.results-column.hidden {
+    display: none;
 }
 
 h3 {

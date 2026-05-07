@@ -8,6 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const startStateInput = document.getElementById('start-state');
     const goalStateInput = document.getElementById('goal-state');
 
+    // Checkboxes
+    const checks = {
+        dfs: document.getElementById('check-dfs'),
+        bfs: document.getElementById('check-bfs'),
+        heuristic: document.getElementById('check-heuristic')
+    };
+
     // Result Columns
     const columns = {
         dfs: document.getElementById('dfs-results'),
@@ -18,19 +25,25 @@ document.addEventListener('DOMContentLoaded', () => {
     solveBtn.addEventListener('click', async () => {
         const start = startStateInput.value;
         const goal = goalStateInput.value;
+        const selectedAlgos = Object.keys(checks).filter(key => checks[key].checked);
+
+        if (selectedAlgos.length === 0) {
+            showError("Por favor selecciona al menos un algoritmo.");
+            return;
+        }
 
         if (!start || !goal) {
             showError("Por favor ingrese ambos estados inicial y objetivo.");
             return;
         }
 
-        resetUI();
+        resetUI(selectedAlgos);
 
         try {
             const response = await fetch('/api/compare', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ start, goal })
+                body: JSON.stringify({ start, goal, algorithms: selectedAlgos })
             });
 
             const data = await response.json();
@@ -48,14 +61,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    function resetUI() {
+    function resetUI(selectedAlgos) {
         resultsSection.classList.add('hidden');
         errorContainer.classList.add('hidden');
         loader.classList.remove('hidden');
 
-        Object.values(columns).forEach(col => {
+        Object.keys(columns).forEach(key => {
+            const col = columns[key];
             col.querySelector('.stats-compact').innerHTML = '';
             col.querySelector('.path-visualizer-vertical').innerHTML = '';
+
+            // Show/Hide column based on selection
+            if (selectedAlgos.includes(key)) {
+                col.classList.remove('hidden');
+            } else {
+                col.classList.add('hidden');
+            }
         });
     }
 
@@ -66,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const col = columns[algo];
             const result = data[algo];
 
-            if (!result.path) {
+            if (!result || !result.path) {
                 col.querySelector('.stats-compact').innerHTML = '<p class="error-msg">Sin solución</p>';
                 return;
             }
