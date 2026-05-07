@@ -103,26 +103,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Render Stats
+            // Render Stats - TIME REMOVED
             col.querySelector('.stats-compact').innerHTML = `
-                <div class="stat-mini"><span>Pasos</span> ${result.steps}</div>
-                <div class="stat-mini"><span>Tiempo</span> ${result.time}ms</div>
+                <div class="stat-mini"><span>Total Pasos</span> ${result.steps}</div>
             `;
 
-            // Render Path
+            // Render Path - TIMELINE STYLE
             const visualizer = col.querySelector('.path-visualizer-vertical');
             result.path.forEach((step, index) => {
                 const node = document.createElement('div');
                 node.className = 'step-node';
                 node.textContent = step.join(', ');
                 visualizer.appendChild(node);
-
-                if (index < result.path.length - 1) {
-                    const arrow = document.createElement('div');
-                    arrow.className = 'arrow-v';
-                    arrow.innerHTML = '↓';
-                    visualizer.appendChild(arrow);
-                }
             });
         });
     }

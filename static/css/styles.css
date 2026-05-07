@@ -188,10 +188,10 @@ h3 {
 
 .stats-compact {
     display: flex;
-    justify-content: space-between;
-    padding: 1rem;
-    background: #f8fafc;
-    border-radius: 8px;
+    justify-content: center;
+    padding: 0.75rem;
+    background: #f1f5f9;
+    border-radius: 6px;
     margin-bottom: 2rem;
 }
 
@@ -200,41 +200,77 @@ h3 {
 }
 
 .stat-mini span {
-    display: block;
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-size: 0.7rem;
+    font-weight: 700;
     color: var(--text-muted);
     text-transform: uppercase;
+    display: block;
+    margin-bottom: 2px;
 }
 
 .stat-mini {
+    font-size: 1.25rem;
     font-weight: 700;
-    font-size: 1.125rem;
 }
 
 .path-visualizer-vertical {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
+    align-items: stretch;
+    gap: 0;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.path-visualizer-vertical::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 5px;
+    bottom: 5px;
+    width: 2px;
+    background: var(--border);
 }
 
 .step-node {
-    width: 100%;
-    padding: 0.75rem;
+    position: relative;
+    padding: 0.75rem 1rem;
     background: white;
     border: 1px solid var(--border);
     border-radius: 6px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.9rem;
-    text-align: center;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
     color: var(--text);
+    transition: all 0.2s;
+}
+
+.step-node::before {
+    content: '';
+    position: absolute;
+    left: -1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    background: white;
+    border: 2px solid var(--primary);
+    border-radius: 50%;
+    margin-left: -4px;
+}
+
+.step-node:last-child {
+    margin-bottom: 0;
+}
+
+.step-node:hover {
+    border-color: var(--primary);
+    transform: translateX(5px);
 }
 
 .arrow-v {
-    color: var(--text-muted);
-    font-size: 1rem;
-    opacity: 0.5;
+    display: none;
+    /* Removed in favor of timeline line */
 }
 
 .loader {
