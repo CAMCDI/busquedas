@@ -54,46 +54,44 @@ h1 {
 }
 
 .selection-group {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
 }
 
-.selection-group label {
+.chip-container {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.algo-chip {
+    padding: 0.6rem 1.25rem;
+    background: #f1f5f9;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 50px;
     font-size: 0.875rem;
     font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    display: block;
-    margin-bottom: 1rem;
-}
-
-.checkbox-grid {
-    display: flex;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-}
-
-.check-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 0.95rem;
-    font-weight: 500;
     cursor: pointer;
-    padding: 0.5rem 0.75rem;
-    border-radius: 8px;
-    transition: background 0.2s;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
 }
 
-.check-item:hover {
-    background: #f1f5f9;
+.algo-chip:hover {
+    background: #e2e8f0;
+    color: var(--text);
+    transform: translateY(-1px);
 }
 
-.check-item input[type="checkbox"] {
-    width: 1.125rem;
-    height: 1.125rem;
-    accent-color: var(--primary);
-    cursor: pointer;
+.algo-chip.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.algo-chip.active:hover {
+    background: var(--primary-hover);
 }
 
 #puzzle-inputs {

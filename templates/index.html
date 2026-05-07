@@ -16,17 +16,11 @@
 
         <section class="config-card">
             <div class="selection-group">
-                <label>Selecciona los algoritmos:</label>
-                <div class="checkbox-grid">
-                    <label class="check-item">
-                        <input type="checkbox" id="check-dfs" checked> DFS
-                    </label>
-                    <label class="check-item">
-                        <input type="checkbox" id="check-bfs" checked> BFS
-                    </label>
-                    <label class="check-item">
-                        <input type="checkbox" id="check-heuristic" checked> Heurística
-                    </label>
+                <label>Algoritmos a comparar:</label>
+                <div id="algo-chips" class="chip-container">
+                    <div class="algo-chip active" data-algo="dfs">DFS Profundidad</div>
+                    <div class="algo-chip active" data-algo="bfs">BFS Amplitud</div>
+                    <div class="algo-chip active" data-algo="heuristic">Heurística</div>
                 </div>
             </div>
 

@@ -8,14 +8,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const startStateInput = document.getElementById('start-state');
     const goalStateInput = document.getElementById('goal-state');
 
-    // Checkboxes
-    const checks = {
-        dfs: document.getElementById('check-dfs'),
-        bfs: document.getElementById('check-bfs'),
-        heuristic: document.getElementById('check-heuristic')
-    };
+    // Chips Selection Logic
+    const chipContainer = document.getElementById('algo-chips');
+    const chips = chipContainer.querySelectorAll('.algo-chip');
 
-    // Result Columns
+    chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            chip.classList.toggle('active');
+        });
+    });
+
+    // Result Columns Mapping
     const columns = {
         dfs: document.getElementById('dfs-results'),
         bfs: document.getElementById('bfs-results'),
@@ -25,7 +28,11 @@ document.addEventListener('DOMContentLoaded', () => {
     solveBtn.addEventListener('click', async () => {
         const start = startStateInput.value;
         const goal = goalStateInput.value;
-        const selectedAlgos = Object.keys(checks).filter(key => checks[key].checked);
+
+        // Get active algorithms from chips
+        const selectedAlgos = Array.from(chips)
+            .filter(c => c.classList.contains('active'))
+            .map(c => c.getAttribute('data-algo'));
 
         if (selectedAlgos.length === 0) {
             showError("Por favor selecciona al menos un algoritmo.");
@@ -68,6 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         Object.keys(columns).forEach(key => {
             const col = columns[key];
+            if (!col) return;
+
             col.querySelector('.stats-compact').innerHTML = '';
             col.querySelector('.path-visualizer-vertical').innerHTML = '';
 
@@ -85,6 +94,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         Object.keys(data).forEach(algo => {
             const col = columns[algo];
+            if (!col) return;
+
             const result = data[algo];
 
             if (!result || !result.path) {
@@ -94,8 +105,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Render Stats
             col.querySelector('.stats-compact').innerHTML = `
-                <div class="stat-mini"><span>Pasos:</span> ${result.steps}</div>
-                <div class="stat-mini"><span>Tiempo:</span> ${result.time}ms</div>
+                <div class="stat-mini"><span>Pasos</span> ${result.steps}</div>
+                <div class="stat-mini"><span>Tiempo</span> ${result.time}ms</div>
             `;
 
             // Render Path
