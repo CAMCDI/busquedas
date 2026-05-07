@@ -37,7 +37,7 @@ def compare_searches():
         results['dfs'] = {
             "path": get_path_data(dfs_node),
             "time": round((time.time() - start_time) * 1000, 2),
-            "steps": len(get_path_data(dfs_node)) - 1 if dfs_node else 0
+            "steps": len(get_path_data(dfs_node)) if dfs_node else 0
         }
 
         # 2. BFS
@@ -46,7 +46,7 @@ def compare_searches():
         results['bfs'] = {
             "path": get_path_data(bfs_node),
             "time": round((time.time() - start_time) * 1000, 2),
-            "steps": len(get_path_data(bfs_node)) - 1 if bfs_node else 0
+            "steps": len(get_path_data(bfs_node)) if bfs_node else 0
         }
 
         # 3. Heuristic
@@ -55,7 +55,7 @@ def compare_searches():
         results['heuristic'] = {
             "path": get_path_data(heur_node),
             "time": round((time.time() - start_time) * 1000, 2),
-            "steps": len(get_path_data(heur_node)) - 1 if heur_node else 0
+            "steps": len(get_path_data(heur_node)) if heur_node else 0
         }
 
         return jsonify(results)
