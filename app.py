@@ -1,20 +1,15 @@
 from flask import Flask, render_template, request, jsonify
-from logic import Nodo, buscar_solucion_dfs, buscar_solucion_ucs, buscar_solucion_heuristica, CONEXIONES_ST
+from logic import buscar_solucion_dfs, buscar_solucion_bfs, buscar_solucion_heuristica, Nodo
+import time
 
 app = Flask(__name__)
 
-def parse_state(state_str):
-    """Convierte una cadena como '4,2,3,1' en una lista de enteros."""
-    try:
-        return [int(x.strip()) for x in state_str.split(',')]
-    except ValueError:
+def get_path_data(nodo):
+    if not nodo:
         return None
-
-def get_path(nodo):
-    """Obtiene la ruta desde el nodo solución hasta el inicial."""
     path = []
     curr = nodo
-    while curr is not None:
+    while curr:
         path.append(curr.get_datos())
         curr = curr.get_padre()
     path.reverse()
@@ -24,55 +19,48 @@ def get_path(nodo):
 def index():
     return render_template('index.html')
 
-@app.route('/api/search', methods=['POST'])
-def search():
+@app.route('/api/compare', methods=['POST'])
+def compare_searches():
     data = request.json
-    alg = data.get('algorithm')
-    start = data.get('start')
-    goal = data.get('goal')
-
-    if not alg or not start or not goal:
-        return jsonify({'error': 'Faltan parámetros'}), 400
-
-    result = None
-    if alg == 'dfs':
-        start_list = parse_state(start)
-        goal_list = parse_state(goal)
-        if start_list is None or goal_list is None:
-            return jsonify({'error': 'Formato de estado inválido (use num,num,num,num)'}), 400
-        result_node = buscar_solucion_dfs(start_list, goal_list)
-        if result_node:
-            result = {'path': get_path(result_node)}
-
-    elif alg == 'ucs':
-        # start y goal son nombres de ciudades
-        result_node = buscar_solucion_ucs(start.lower(), goal.lower())
-        if result_node:
-            result = {
-                'path': get_path(result_node),
-                'cost': result_node.get_costo()
-            }
-
-    elif alg == 'heuristica':
-        start_list = parse_state(start)
-        goal_list = parse_state(goal)
-        if start_list is None or goal_list is None:
-            return jsonify({'error': 'Formato de estado inválido'}), 400
+    try:
+        start_state = [int(x) for x in data.get('start', '').split(',')]
+        goal_state = [int(x) for x in data.get('goal', '').split(',')]
         
-        nodo_inicial = Nodo(start_list)
-        result_node = buscar_solucion_heuristica(nodo_inicial, goal_list, [])
-        if result_node:
-            result = {'path': get_path(result_node)}
+        if len(start_state) != 4 or len(goal_state) != 4:
+            return jsonify({"error": "Los estados deben tener 4 números separados por comas."}), 400
+        
+        results = {}
 
-    if result:
-        return jsonify(result)
-    else:
-        return jsonify({'error': 'No se encontró solución'}), 404
+        # 1. DFS
+        start_time = time.time()
+        dfs_node = buscar_solucion_dfs(start_state, goal_state)
+        results['dfs'] = {
+            "path": get_path_data(dfs_node),
+            "time": round((time.time() - start_time) * 1000, 2),
+            "steps": len(get_path_data(dfs_node)) - 1 if dfs_node else 0
+        }
 
-@app.route('/api/cities')
-def get_cities():
-    """Devuelve la lista de ciudades disponibles para UCS."""
-    return jsonify(list(CONEXIONES_ST.keys()))
+        # 2. BFS
+        start_time = time.time()
+        bfs_node = buscar_solucion_bfs(start_state, goal_state)
+        results['bfs'] = {
+            "path": get_path_data(bfs_node),
+            "time": round((time.time() - start_time) * 1000, 2),
+            "steps": len(get_path_data(bfs_node)) - 1 if bfs_node else 0
+        }
+
+        # 3. Heuristic
+        start_time = time.time()
+        heur_node = buscar_solucion_heuristica(Nodo(start_state), goal_state, [])
+        results['heuristic'] = {
+            "path": get_path_data(heur_node),
+            "time": round((time.time() - start_time) * 1000, 2),
+            "steps": len(get_path_data(heur_node)) - 1 if heur_node else 0
+        }
+
+        return jsonify(results)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

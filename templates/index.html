@@ -4,11 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infinity Search | Algoritmos de Búsqueda</title>
+    <title>BÚSQUEDAS | Comparativa en Tiempo Real</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap"
-        rel="stylesheet">
 </head>
 
 <body>
@@ -20,47 +17,49 @@
         </header>
 
         <section class="config-card">
-            <div class="algorithm-selector">
-                <label for="algorithm">Algoritmo</label>
-                <select id="algorithm">
-                    <option value="dfs">Búsqueda en Profundidad (DFS)</option>
-                    <option value="ucs">Costo Uniforme (UCS)</option>
-                    <option value="heuristica">Búsqueda Heurística</option>
-                </select>
-            </div>
-
-            <div class="inputs-grid" id="inputs-container">
-                <!-- Los campos se generarán dinámicamente aquí -->
-            </div>
-
-            <button id="solve-btn" class="solve-btn">
-                <span>EJECUTAR ALGORITMO</span>
-                <div class="btn-glow"></div>
-            </button>
-        </section>
-
-        <section class="results-section">
-            <div id="loader" class="loader hidden"></div>
-            <div id="error-msg" class="error-msg hidden"></div>
-
-            <div id="results-content" class="results-content hidden">
-                <h3>Resultado de la Búsqueda</h3>
-                <div class="stats-bar">
-                    <div class="stat-item" id="stat-steps">
-                        <span class="label">Pasos:</span>
-                        <span class="value">0</span>
+            <div id="puzzle-inputs">
+                <div class="inputs-grid">
+                    <div class="input-group">
+                        <label for="start-state">Estado Inicial</label>
+                        <input type="text" id="start-state" placeholder="Ej: 4,2,3,1">
                     </div>
-                    <div class="stat-item hidden" id="stat-cost-container">
-                        <span class="label">Costo Total:</span>
-                        <span class="value" id="stat-cost">0</span>
+                    <div class="input-group">
+                        <label for="goal-state">Estado Objetivo</label>
+                        <input type="text" id="goal-state" placeholder="Ej: 1,2,3,4">
                     </div>
                 </div>
+            </div>
 
-                <div class="path-visualizer" id="path-visualizer">
-                    <!-- Los pasos se insertarán aquí -->
+            <button id="solve-btn" class="solve-btn">COMPARAR ALGORITMOS</button>
+        </section>
+
+        <section id="results-section" class="hidden">
+            <div class="results-grid">
+                <!-- DFS Results -->
+                <div class="results-column" id="dfs-results">
+                    <h3>DFS (Profundidad)</h3>
+                    <div class="stats-compact"></div>
+                    <div class="path-visualizer-vertical"></div>
+                </div>
+
+                <!-- BFS Results -->
+                <div class="results-column" id="bfs-results">
+                    <h3>BFS (Amplitud)</h3>
+                    <div class="stats-compact"></div>
+                    <div class="path-visualizer-vertical"></div>
+                </div>
+
+                <!-- Heuristic Results -->
+                <div class="results-column" id="heuristic-results">
+                    <h3>Heurística</h3>
+                    <div class="stats-compact"></div>
+                    <div class="path-visualizer-vertical"></div>
                 </div>
             </div>
         </section>
+
+        <div id="loader" class="loader hidden"></div>
+        <div id="error-container" class="error-msg hidden"></div>
     </main>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>

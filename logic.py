@@ -61,18 +61,14 @@ def buscar_solucion_dfs(estado_inicial, solucion):
             return nodo
         else:
             dato_nodo = nodo.get_datos() 
-            # Operador izquierdo 
-            hijo_1 = [dato_nodo[1], dato_nodo[0], dato_nodo[2], dato_nodo[3]]
-            hijo_izq = Nodo(hijo_1)
-            # operador central
-            hijo_2 = [dato_nodo[0], dato_nodo[2], dato_nodo[1], dato_nodo[3]]
-            hijo_cen = Nodo(hijo_2)
-            # Operador derecho
-            hijo_3 = [dato_nodo[0], dato_nodo[1], dato_nodo[3], dato_nodo[2]]
-            hijo_der = Nodo(hijo_3)
+            # Operadores
+            h1 = [dato_nodo[1], dato_nodo[0], dato_nodo[2], dato_nodo[3]]
+            h2 = [dato_nodo[0], dato_nodo[2], dato_nodo[1], dato_nodo[3]]
+            h3 = [dato_nodo[0], dato_nodo[1], dato_nodo[3], dato_nodo[2]]
 
             hijos = []
-            for h in [hijo_izq, hijo_cen, hijo_der]:
+            for h_dato in [h1, h2, h3]:
+                h = Nodo(h_dato)
                 if not h.en_lista(nodos_visitados) and not h.en_lista(nodos_frontera):
                     nodos_frontera.append(h)
                     hijos.append(h)
@@ -81,57 +77,35 @@ def buscar_solucion_dfs(estado_inicial, solucion):
     return None
 
 
-# --- Algoritmo UCS (Búsqueda de Costo Uniforme) ---
-CONEXIONES_ST = {
-    'jiloyork':{'cdmx':125, 'queretaro':513},
-    'morelos':{'queretaro':524},
-    'cdmx':{'jiloyork':125, 'queretaro':423, 'hidalgo':491},
-    'hidalgo':{'cdmx':491, 'queretaro':356, 'mexicali':309, 'monterrey':346},
-    'queretaro':{'slp':203, 'morelos':514, 'jiloyork':513, 'cdmx':423, 'monterrey':603, 'sonora':437, 'hidalgo':356,'mexicali':313, 'ags':599},
-    'slp':{'ags':390, 'queretaro':203},
-    'ags':{'slp':390, 'queretaro':599},
-    'sonora':{'queretaro':437, 'mexicali':394},
-    'mexicali':{'monterrey':296, 'hidalgo':309, 'queretaro':313},
-    'monterrey':{'mexicali':296, 'queretaro':603, 'hidalgo':346}
-}
-
-def buscar_solucion_ucs(estado_inicial, solucion, conexiones=CONEXIONES_ST):
+# --- Algoritmo BFS (Búsqueda en Amplitud) ---
+def buscar_solucion_bfs(estado_inicial, solucion):
     solucionado = False
     nodos_visitados = []
     nodos_frontera = []
-
     nodo_inicial = Nodo(estado_inicial)
-    nodo_inicial.set_costo(0)
     nodos_frontera.append(nodo_inicial)
-    
-    while not solucionado and len(nodos_frontera) != 0:
-        nodos_frontera = sorted(nodos_frontera, key=lambda x: x.get_costo())
+
+    while (not solucionado) and len(nodos_frontera) != 0:
         nodo = nodos_frontera.pop(0)
         nodos_visitados.append(nodo)
-
+        
         if nodo.get_datos() == solucion:
-            return nodo 
+            return nodo
         else:
-            dato_nodo = nodo.get_datos()
-            if dato_nodo not in conexiones:
-                continue
-                
-            lista_hijos = []
-            for un_hijo in conexiones[dato_nodo]:
-                hijo = Nodo(un_hijo)
-                costo = conexiones[dato_nodo][un_hijo]
-                hijo.set_costo(nodo.get_costo() + costo)
-                lista_hijos.append(hijo)
+            dato_nodo = nodo.get_datos() 
+            # Operadores
+            h1 = [dato_nodo[1], dato_nodo[0], dato_nodo[2], dato_nodo[3]]
+            h2 = [dato_nodo[0], dato_nodo[2], dato_nodo[1], dato_nodo[3]]
+            h3 = [dato_nodo[0], dato_nodo[1], dato_nodo[3], dato_nodo[2]]
 
-                if not hijo.en_lista(nodos_visitados):
-                    if hijo.en_lista(nodos_frontera):
-                        for n in nodos_frontera:
-                            if n.igual(hijo) and n.get_costo() > hijo.get_costo():
-                                nodos_frontera.remove(n)
-                                nodos_frontera.append(hijo)
-                    else:
-                        nodos_frontera.append(hijo)
-            nodo.set_hijos(lista_hijos)
+            hijos = []
+            for h_dato in [h1, h2, h3]:
+                h = Nodo(h_dato)
+                if not h.en_lista(nodos_visitados) and not h.en_lista(nodos_frontera):
+                    nodos_frontera.append(h)
+                    hijos.append(h)
+            
+            nodo.set_hijos(hijos)
     return None
 
 
@@ -158,7 +132,6 @@ def buscar_solucion_heuristica(nodo_inicial, solucion, visitados):
     else:
         dato_nodo = nodo_inicial.get_datos()
         
-        # Generar hijos
         h1 = [dato_nodo[1], dato_nodo[0], dato_nodo[2], dato_nodo[3]]
         h2 = [dato_nodo[0], dato_nodo[2], dato_nodo[1], dato_nodo[3]]
         h3 = [dato_nodo[0], dato_nodo[1], dato_nodo[3], dato_nodo[2]]

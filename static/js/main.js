@@ -1,143 +1,46 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const algSelect = document.getElementById('algorithm');
-    const labelStart = document.getElementById('label-start');
-    const labelGoal = document.getElementById('label-goal');
-    const inputStart = document.getElementById('input-start');
-    const inputGoal = document.getElementById('input-goal');
     const solveBtn = document.getElementById('solve-btn');
-    const resultsContent = document.getElementById('results-content');
+    const resultsSection = document.getElementById('results-section');
     const loader = document.getElementById('loader');
-    const errorMsg = document.getElementById('error-msg');
-    const pathVisualizer = document.getElementById('path-visualizer');
-    const statSteps = document.querySelector('#stat-steps .value');
-    const statCost = document.getElementById('stat-cost');
-    const statCostContainer = document.getElementById('stat-cost-container');
+    const errorContainer = document.getElementById('error-container');
 
-    const config = {
-        dfs: {
-            labelStart: 'Estado Inicial (Puzzle)',
-            labelGoal: 'Estado Objetivo (Puzzle)',
-            placeholder: 'Ej: 4,2,3,1',
-            type: 'text'
-        },
-        ucs: {
-            labelStart: 'Ciudad Origen',
-            labelGoal: 'Ciudad Destino',
-            placeholder: '',
-            type: 'select'
-        },
-        heuristica: {
-            labelStart: 'Estado Inicial (Puzzle)',
-            labelGoal: 'Estado Objetivo (Puzzle)',
-            placeholder: 'Ej: 4,2,3,1',
-            type: 'text'
-        }
+    // Inputs
+    const startStateInput = document.getElementById('start-state');
+    const goalStateInput = document.getElementById('goal-state');
+
+    // Result Columns
+    const columns = {
+        dfs: document.getElementById('dfs-results'),
+        bfs: document.getElementById('bfs-results'),
+        heuristic: document.getElementById('heuristic-results')
     };
 
-    let cities = [];
-
-    async function fetchCities() {
-        try {
-            const resp = await fetch('/api/cities');
-            cities = await resp.json();
-        } catch (e) {
-            console.error("Error cargando ciudades", e);
-        }
-    }
-
-    function createInput(id, type, placeholder) {
-        if (type === 'select') {
-            const select = document.createElement('select');
-            select.id = id;
-            cities.forEach(city => {
-                const opt = document.createElement('option');
-                opt.value = city;
-                opt.textContent = city.charAt(0).toUpperCase() + city.slice(1);
-                select.appendChild(opt);
-            });
-            return select;
-        } else {
-            const input = document.createElement('input');
-            input.id = id;
-            input.type = 'text';
-            input.placeholder = placeholder;
-            return input;
-        }
-    }
-
-    function updateInputs() {
-        const alg = algSelect.value;
-        const currentConfig = config[alg];
-
-        const inputsContainer = document.getElementById('inputs-container');
-        inputsContainer.innerHTML = '';
-
-        const group1 = document.createElement('div');
-        group1.className = 'input-group';
-        const lbl1 = document.createElement('label');
-        lbl1.textContent = currentConfig.labelStart;
-        group1.appendChild(lbl1);
-        const in1 = createInput('input-start', currentConfig.type, currentConfig.placeholder);
-        group1.appendChild(in1);
-
-        const group2 = document.createElement('div');
-        group2.className = 'input-group';
-        const lbl2 = document.createElement('label');
-        lbl2.textContent = currentConfig.labelGoal;
-        group2.appendChild(lbl2);
-        const in2 = createInput('input-goal', currentConfig.type, currentConfig.placeholder);
-        group2.appendChild(in2);
-
-        inputsContainer.appendChild(group1);
-        inputsContainer.appendChild(group2);
-
-        resultsContent.classList.add('hidden');
-        errorMsg.classList.add('hidden');
-    }
-
-    algSelect.addEventListener('change', updateInputs);
-
-    // Inicializar
-    fetchCities().then(() => updateInputs());
-
     solveBtn.addEventListener('click', async () => {
-        const inputStart = document.getElementById('input-start');
-        const inputGoal = document.getElementById('input-goal');
+        const start = startStateInput.value;
+        const goal = goalStateInput.value;
 
-        const payload = {
-            algorithm: algSelect.value,
-            start: inputStart.value.trim(),
-            goal: inputGoal.value.trim()
-        };
-
-        if (!payload.start || !payload.goal) {
-            showError('Por favor ingresa ambos valores');
+        if (!start || !goal) {
+            showError("Por favor ingrese ambos estados inicial y objetivo.");
             return;
         }
 
-        // UI State
-        loader.classList.remove('hidden');
-        resultsContent.classList.add('hidden');
-        errorMsg.classList.add('hidden');
-        pathVisualizer.innerHTML = '';
+        resetUI();
 
         try {
-            const response = await fetch('/api/search', {
+            const response = await fetch('/api/compare', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({ start, goal })
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Error en el servidor');
+                throw new Error(data.error || "Error en la búsqueda");
             }
 
-            renderResults(data);
-
-            // Auto-scroll a los resultados
-            resultsContent.scrollIntoView({ behavior: 'smooth' });
+            renderAllResults(data);
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
         } catch (err) {
             showError(err.message);
         } finally {
@@ -145,34 +48,56 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    function renderResults(data) {
-        resultsContent.classList.remove('hidden');
-        statSteps.textContent = data.path.length;
+    function resetUI() {
+        resultsSection.classList.add('hidden');
+        errorContainer.classList.add('hidden');
+        loader.classList.remove('hidden');
 
-        if (data.cost !== undefined) {
-            statCostContainer.classList.remove('hidden');
-            statCost.textContent = `${data.cost} km`;
-        } else {
-            statCostContainer.classList.add('hidden');
-        }
+        Object.values(columns).forEach(col => {
+            col.querySelector('.stats-compact').innerHTML = '';
+            col.querySelector('.path-visualizer-vertical').innerHTML = '';
+        });
+    }
 
-        data.path.forEach((step, index) => {
-            const node = document.createElement('div');
-            node.className = 'step-node';
-            node.textContent = Array.isArray(step) ? step.join(', ') : step;
-            pathVisualizer.appendChild(node);
+    function renderAllResults(data) {
+        resultsSection.classList.remove('hidden');
 
-            if (index < data.path.length - 1) {
-                const arrow = document.createElement('div');
-                arrow.className = 'arrow';
-                arrow.textContent = '→';
-                pathVisualizer.appendChild(arrow);
+        Object.keys(data).forEach(algo => {
+            const col = columns[algo];
+            const result = data[algo];
+
+            if (!result.path) {
+                col.querySelector('.stats-compact').innerHTML = '<p class="error-msg">Sin solución</p>';
+                return;
             }
+
+            // Render Stats
+            col.querySelector('.stats-compact').innerHTML = `
+                <div class="stat-mini"><span>Pasos:</span> ${result.steps}</div>
+                <div class="stat-mini"><span>Tiempo:</span> ${result.time}ms</div>
+            `;
+
+            // Render Path
+            const visualizer = col.querySelector('.path-visualizer-vertical');
+            result.path.forEach((step, index) => {
+                const node = document.createElement('div');
+                node.className = 'step-node';
+                node.textContent = step.join(', ');
+                visualizer.appendChild(node);
+
+                if (index < result.path.length - 1) {
+                    const arrow = document.createElement('div');
+                    arrow.className = 'arrow-v';
+                    arrow.innerHTML = '↓';
+                    visualizer.appendChild(arrow);
+                }
+            });
         });
     }
 
     function showError(msg) {
-        errorMsg.textContent = msg;
-        errorMsg.classList.remove('hidden');
+        errorContainer.textContent = msg;
+        errorContainer.classList.remove('hidden');
+        loader.classList.add('hidden');
     }
 });
