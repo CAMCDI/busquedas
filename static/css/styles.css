@@ -1,19 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;700&family=Indie+Flower&display=swap');
 
 :root {
-    --primary: #b4aee8;
-    /* Soft Lavender */
-    --secondary: #9ed2c6;
-    /* Soft Mint */
-    --accent: #f89e9e;
-    /* Soft Coral */
-    --bg-overlay: rgba(255, 253, 240, 0.85);
-    /* Creamy paper feel */
-    --text-dark: #4a4a4a;
-    --text-muted: #7d7d7d;
-    --paper-white: #fffdf9;
-    --border-sketch: #635e5a;
-    --shadow-soft: 5px 5px 15px rgba(0, 0, 0, 0.05);
+    --primary: #c1a7d1;
+    /* Soft Wisteria */
+    --secondary: #a3d8c4;
+    /* Soft Sage */
+    --accent: #fbc4ab;
+    /* Soft Apricot */
+    --paper: #fffdf5;
+    --text-dark: #504a43;
+    --text-muted: #8e877d;
+    --border-sketch: #8b8071;
+    --bg-start: #f8e1e7;
+    /* Soft Pink Sunset */
+    --bg-mid: #e3f0f8;
+    /* Soft Sky Blue */
+    --bg-end: #fff9e6;
+    /* Soft Morning Light */
 }
 
 * {
@@ -30,31 +33,23 @@ body {
     justify-content: center;
     align-items: center;
     overflow-x: hidden;
-    background-color: #f0e9df;
+    /* Ghibli Sky Gradient */
+    background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 50%, var(--bg-end) 100%);
+    background-attachment: fixed;
 }
 
-/* --- Ghibli Background --- */
-.background-layer {
+/* Subtle texture overlay for a "hand-drawn" feel without using actual images */
+body::before {
+    content: "";
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: url('../img/background.png') no-repeat center center fixed;
-    background-size: cover;
-    z-index: -2;
-    filter: brightness(0.9) contrast(1.1);
-}
-
-.background-blur {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 253, 240, 0.2);
-    backdrop-filter: blur(2px);
-    z-index: -1;
+    opacity: 0.03;
+    pointer-events: none;
+    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)"/></svg>');
+    z-index: 100;
 }
 
 .container {
@@ -67,110 +62,112 @@ body {
 
 header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
 }
 
 .glow-text {
     font-family: 'Indie Flower', cursive;
-    font-size: 4.5rem;
-    color: #5a5a5a;
-    text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.8);
+    font-size: 5rem;
+    color: var(--text-dark);
+    letter-spacing: -1px;
     position: relative;
+    display: inline-block;
 }
 
 .glow-text::after {
-    display: none;
+    content: '';
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background: var(--secondary);
+    opacity: 0.3;
+    z-index: -1;
 }
 
 .config-card {
-    background: var(--bg-overlay);
-    border: 2px solid var(--border-sketch);
-    border-radius: 15px;
-    padding: 2.5rem;
-    box-shadow: 12px 12px 0px rgba(0, 0, 0, 0.05);
+    background: var(--paper);
+    border: 3px solid var(--border-sketch);
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 15px 15px 0px rgba(139, 128, 113, 0.1);
     position: relative;
 }
 
-/* Paper clip effect */
+/* Paper clip aesthetic */
 .config-card::before {
     content: '';
     position: absolute;
-    top: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 30px;
-    background: rgba(200, 200, 200, 0.4);
-    border-radius: 5px;
+    top: -20px;
+    left: 40px;
+    width: 60px;
+    height: 15px;
+    background: #e0ded0;
+    border-radius: 4px;
+    transform: rotate(-2deg);
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .algorithm-selector {
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
 }
 
 label {
     display: block;
-    margin-bottom: 0.8rem;
+    margin-bottom: 1rem;
     color: var(--text-dark);
     font-family: 'Indie Flower', cursive;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 700;
 }
 
 select,
 input {
     width: 100%;
-    background: var(--paper-white);
-    border: 1px solid #d1d1d1;
-    border-radius: 8px;
-    padding: 1rem;
+    background: transparent;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    padding: 1.2rem;
     color: var(--text-dark);
     font-family: 'Quicksand', sans-serif;
     font-size: 1.1rem;
-    transition: transform 0.2s ease, border-color 0.2s ease;
-    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s ease;
 }
 
 select:focus,
 input:focus {
     outline: none;
     border-color: var(--primary);
-    transform: scale(1.02);
+    background: white;
 }
 
 .inputs-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-bottom: 2rem;
-}
-
-@media (max-width: 600px) {
-    .inputs-grid {
-        grid-template-columns: 1fr;
-    }
+    gap: 2.5rem;
+    margin-bottom: 2.5rem;
 }
 
 .solve-btn {
     width: 100%;
-    padding: 1.2rem;
+    padding: 1.4rem;
     background: var(--primary);
     color: white;
-    border: 2px solid var(--border-sketch);
-    border-radius: 10px;
+    border: 3px solid var(--border-sketch);
+    border-radius: 12px;
     font-family: 'Indie Flower', cursive;
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 4px 4px 0px var(--border-sketch);
+    transition: all 0.2s ease;
+    box-shadow: 6px 6px 0px var(--border-sketch);
 }
 
 .solve-btn:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0px var(--border-sketch);
-    filter: brightness(1.1);
+    box-shadow: 8px 8px 0px var(--border-sketch);
+    filter: brightness(1.05);
 }
 
 .solve-btn:active {
@@ -178,39 +175,33 @@ input:focus {
     box-shadow: 0px 0px 0px var(--border-sketch);
 }
 
-/* --- Results Section --- */
 .results-content {
-    margin-top: 2rem;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    padding: 2rem;
-    animation: fadeIn 0.8s ease;
-    box-shadow: var(--shadow-soft);
+    margin-top: 3rem;
+    background: white;
+    border: 3px solid var(--border-sketch);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 10px 10px 0px rgba(139, 128, 113, 0.05);
+    animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 h3 {
     font-family: 'Indie Flower', cursive;
-    font-size: 2rem;
+    font-size: 2.2rem;
     color: var(--primary);
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .stats-bar {
     display: flex;
-    gap: 3rem;
-    margin-bottom: 2rem;
+    gap: 4rem;
+    margin-bottom: 2.5rem;
     padding-bottom: 1rem;
-    border-bottom: 1px dashed #ccc;
-}
-
-.stat-item .label {
-    font-size: 0.9rem;
-    color: var(--text-muted);
+    border-bottom: 2px dashed #eee;
 }
 
 .stat-item .value {
-    font-size: 1.8rem;
+    font-size: 2.2rem;
     font-weight: 700;
     color: var(--accent);
 }
@@ -218,46 +209,39 @@ h3 {
 .path-visualizer {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 1.2rem;
     align-items: center;
 }
 
 .step-node {
-    background: #f9f9f9;
-    padding: 0.8rem 1.2rem;
-    border-radius: 6px;
+    background: var(--paper);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
     font-size: 1.1rem;
-    border: 1px solid #eee;
-    color: #555;
-    transform: rotate(-1deg);
-}
-
-.step-node:nth-child(even) {
-    transform: rotate(1deg);
+    border: 2px solid #eee;
+    color: var(--text-dark);
 }
 
 .arrow {
     color: var(--secondary);
-    font-size: 1.5rem;
+    font-size: 2rem;
 }
 
 .loader {
-    width: 40px;
-    height: 40px;
-    border: 4px solid var(--secondary);
-    border-top-color: transparent;
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--paper);
+    border-top-color: var(--primary);
     border-radius: 50%;
     margin: 2rem auto;
-    animation: rotation 1.2s infinite linear;
+    animation: rotation 1s infinite linear;
 }
 
 .error-msg {
-    background: #fffafa;
-    border: 1px solid #ffcccc;
-    color: #cc0000;
-    padding: 1rem;
-    border-radius: 8px;
+    color: #d9534f;
     text-align: center;
+    font-weight: 700;
+    padding: 1rem;
 }
 
 @keyframes rotation {
@@ -266,15 +250,15 @@ h3 {
     }
 }
 
-@keyframes fadeIn {
+@keyframes bounceIn {
     from {
         opacity: 0;
-        transform: scale(0.95);
+        transform: translateY(20px) scale(0.9);
     }
 
     to {
         opacity: 1;
-        transform: scale(1);
+        transform: translateY(0) scale(1);
     }
 }
 
